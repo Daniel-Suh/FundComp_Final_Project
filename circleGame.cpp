@@ -23,6 +23,8 @@ int main(){
     gfx_open(1200, 800, "My window");
     circleBoard.drawButtons();
 
+
+
     while(key){
         // Check for input and advance the circles
         if(gfx_event_waiting()){
@@ -97,7 +99,7 @@ int main(){
             if (event == 27){
                 gfx_clear();
                 gfx_text(500, 400, "Are You Sure You Want To End The Game?");
-                gfx_text(550, 450, "Press esc Again To quit");
+                gfx_text(550, 450, "Press esc Again To Quit");
                 gfx_text(500, 500, "Press Any Other Key Except q To Continue");
                 event = gfx_wait();
                 if (event == 27){

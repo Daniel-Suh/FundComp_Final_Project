@@ -1,11 +1,22 @@
-# Makefile for lab 10
-# #   "make" or "make all : creates all three executables
-# #   "make symbol" : creates the symbol executable
-# #   (similar for "make bounce" and "make funanim")
+# Makefile
+# this makefile is set up to compile two class implementations,
+# as well as a main driver, and to link the three object files
+#
+CMP = g++
+CLASS1 = circleBoard
+MAIN = circleGame
+EXEC = playCircle
 
-circleGame: circleGame.cpp
-	g++ circleboard.cpp circleGame.cpp gfx_mac.o -I/opt/X11/include/ -L/opt/X11/lib/ -lX11 -o circleGame
+$(EXEC): $(MAIN).o $(CLASS1).o
+	$(CMP) $(MAIN).o $(CLASS1).o gfx_mac.o -I/opt/X11/include/ -L/opt/X11/lib/ -lX11 -std=c++11 -o $(EXEC)
+
+$(CLASS1).o: $(CLASS1).h $(CLASS1).cpp
+	$(CMP) -c $(CLASS1).cpp -I/opt/X11/include/ -std=c++11 -o $(CLASS1).o
+
+$(MAIN).o: $(MAIN).cpp $(CLASS1).h
+	$(CMP) -c $(MAIN).cpp -I/opt/X11/include/ -std=c++11 -o $(MAIN).o
 
 clean:
-	rm circleGame
-
+	rm $(MAIN).o
+	rm $(CLASS1).o
+	rm $(EXEC)

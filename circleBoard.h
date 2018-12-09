@@ -15,6 +15,8 @@ const int PAUSE = 10000;
 struct Circle{
     int pathMidX;
     int pathMidY;
+    int circMidX;
+    int circMidY;
     double pathRadius;
     int speed;
     int orientation;
@@ -37,6 +39,7 @@ public:
     //Utility
     void advanceCircles(int);
     void clearCircles();
+    bool checkCollision(int);
     void drawButtons();
     void addPoints(int);
     void checkSetHighscore(int);

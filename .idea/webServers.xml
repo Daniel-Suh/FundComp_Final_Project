@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f45b4112-2a02-4b2b-a04d-c813a80901af" name="Notre Dame" url="http://jsuh3@student01.cse.nd.edu">
+        <fileTransfer host="jsuh3@student01.cse.nd.edu" port="22" rootFolder="/afs/nd.edu/" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

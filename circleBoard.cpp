@@ -14,6 +14,8 @@ void CircleBoard::newCircle(int pMX, int pMY, double pR, int sp, int o, int cR, 
     Circle newCirc;
     newCirc.pathMidX = pMX;
     newCirc.pathMidY = pMY;
+    newCirc.circMidX = 0;
+    newCirc.circMidY = 0;
     newCirc.pathRadius = pR;
     newCirc.speed = sp;
     newCirc.orientation = o;
@@ -89,9 +91,23 @@ void CircleBoard::advanceCircles(int cNum){
     //gfx_color(rand()%255, rand()%255, rand()%255);
 
     int circMidX, circMidY;
-    circMidX = circleVect[cNum].pathMidX + (circleVect[cNum].pathRadius * cos(circleVect[cNum].degree * PI/180));
-    circMidY = circleVect[cNum].pathMidY + (circleVect[cNum].pathRadius * sin(circleVect[cNum].degree * PI/180));
-    gfx_circle(circMidX, circMidY, circleVect[cNum].circRadius);
+    circleVect[cNum].circMidX = circleVect[cNum].pathMidX + (circleVect[cNum].pathRadius * cos(circleVect[cNum].degree * PI/180));
+    circleVect[cNum].circMidY = circleVect[cNum].pathMidY + (circleVect[cNum].pathRadius * sin(circleVect[cNum].degree * PI/180));
+    gfx_circle(circleVect[cNum].circMidX, circleVect[cNum].circMidY, circleVect[cNum].circRadius);
+}
+
+bool CircleBoard::checkCollision(int cNum){
+    double collideDistance, actualDistance;
+    for (int i = 0; i < circleVect.size() ; i++){
+        if (i != cNum){
+            collideDistance = pow(circleVect[i].circRadius + circleVect[cNum].circRadius, 2);
+            actualDistance = pow(circleVect[cNum].circMidX - circleVect[i].circMidX, 2) + pow(circleVect[cNum].circMidY - circleVect[i].circMidY, 2);
+            if (actualDistance <= collideDistance){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void CircleBoard::clearCircles() {
