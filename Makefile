@@ -4,7 +4,7 @@
 #
 CMP = g++
 CLASS1 = circleBoard
-MAIN = circleGame
+MAIN = project
 EXEC = playCircle
 
 $(EXEC): $(MAIN).o $(CLASS1).o

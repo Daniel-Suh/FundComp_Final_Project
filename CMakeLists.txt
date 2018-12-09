@@ -13,4 +13,4 @@ target_link_libraries(My_Project Threads::Threads)
 
 target_link_libraries(My_Project X11)
 
-add_executable (circleGame circleBoard.cpp circleBoard.h circleGame.cpp gfx.h gfx_mac.o)
+add_executable (circleGame circleBoard.cpp circleBoard.h project.cpp gfx.h gfx_mac.o)

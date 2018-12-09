@@ -1,15 +1,25 @@
-//
-// Created by Daniel Suh on 12/1/18.
-//
+/*
+ * Author: Jeongseok Suh, Chris Gotuaco
+ * Filename: circleBoard.cpp
+ * Final Project
+ */
 #include <iostream>
 #include <cmath>
 #include <cstdio>
 #include "circleBoard.h"
 using namespace std;
+
 // Constructors
-CircleBoard::CircleBoard(){}
+CircleBoard::CircleBoard(){
+    highScore = 0;
+    currScore = 0;
+}
 CircleBoard::~CircleBoard(){}
+
 // Accessors
+/*
+ * Creates a new circle object and adds it into a vector of Circles
+ */
 void CircleBoard::newCircle(int pMX, int pMY, double pR, int sp, int o, int cR, int d){
     Circle newCirc;
     newCirc.pathMidX = pMX;
@@ -23,20 +33,18 @@ void CircleBoard::newCircle(int pMX, int pMY, double pR, int sp, int o, int cR, 
     newCirc.degree = d;
     circleVect.push_back(newCirc);
 }
-int CircleBoard::getSpeed(int pos){
-    return circleVect[pos].speed;
-}
-int CircleBoard::getOrientation(int pos){
-    return circleVect[pos].orientation;
-}
-int CircleBoard::getCircRadius(int pos){
-    return circleVect[pos].circRadius;
-}
+
+/*
+ * Returns the user's current score. Used to display the score.
+ */
 int CircleBoard::getCurrScore() {
     return currScore;
 }
 
 //Utility
+/*
+ * Draws the buttons and the score onto the screen
+ */
 void CircleBoard::drawButtons() {
     //Horizontal Lines
     gfx_line(1, 599, 1199, 599);
@@ -74,11 +82,17 @@ void CircleBoard::drawButtons() {
     const char* cs = buf;
 
     gfx_text(1050, 50, "High Score: ");
-    gfx_text(1050, 100, "Your Score: ");
+    gfx_text(1050, 75, "Your Score: ");
     gfx_text(1130, 50, hs);
-    gfx_text(1130, 100, cs);
+    gfx_text(1130, 75, cs);
+
+    gfx_text(50, 50, "Press q to quit");
+    gfx_text(50, 75, "Press esc to clear the board");
 }
 
+/*
+ * Calls the drawButtons function, and adds extra text to the screen
+ */
 void CircleBoard::drawTutorial()
 {
     drawButtons();
@@ -86,6 +100,11 @@ void CircleBoard::drawTutorial()
     gfx_text(100, 120, "The goal of the game is to get as many moving circles as possible without having any of them collide with each other.");
 }
 
+/*
+ * Advances a circle that is called by cNum by the equation
+ *      degree = degree + (speed * orientation)
+ * Also checks to see whether the circle's degree is within the range of 0 - 360, and resets the degree if it is not.
+ */
 void CircleBoard::advanceCircles(int cNum){
     srand(time(NULL));
     if(circleVect[cNum].degree >= 360){
@@ -95,7 +114,6 @@ void CircleBoard::advanceCircles(int cNum){
         circleVect[cNum].degree = circleVect[cNum].degree + 360;
     }
     circleVect[cNum].degree = circleVect[cNum].degree + (circleVect[cNum].speed * circleVect[cNum].orientation);
-    //gfx_color(rand()%255, rand()%255, rand()%255);
 
     int circMidX, circMidY;
     circleVect[cNum].circMidX = circleVect[cNum].pathMidX + (circleVect[cNum].pathRadius * cos(circleVect[cNum].degree * PI/180));
@@ -103,6 +121,10 @@ void CircleBoard::advanceCircles(int cNum){
     gfx_circle(circleVect[cNum].circMidX, circleVect[cNum].circMidY, circleVect[cNum].circRadius);
 }
 
+/*
+ * Checks whether or not two circles have collided. This is calculated through the equation
+ *      (x2 - x1)^2 + (y2 - y1)^2 <= (radius1 + radius2)^2
+ */
 bool CircleBoard::checkCollision(int cNum){
     double collideDistance, actualDistance;
     for (int i = 0; i < circleVect.size() ; i++){
@@ -117,32 +139,52 @@ bool CircleBoard::checkCollision(int cNum){
     return false;
 }
 
+/*
+ * Clears the circleVect vector
+ */
 void CircleBoard::clearCircles() {
     circleVect.erase(circleVect.begin(), circleVect.end());
 }
 
+/*
+ * Adds a certain amount of points to the current score
+ * Runs the checkSetHighscore function
+ */
 void CircleBoard::addPoints(int points){
     currScore = currScore + points;
     checkSetHighscore(currScore);
 }
 
+/*
+ * Checks the high score, if the number of points is higher than the high score,
+ * it sets the high score to the number of points
+ */
 void CircleBoard::checkSetHighscore(int points) {
     if (points > highScore){
         highScore = points;
     }
 }
 
+/*
+ * Resets the current score to 0.
+ */
 void CircleBoard::resetScore(){
     currScore = 0;
 }
 
+/*
+ * Calculates and returns the radius of the revolution
+ *      - Based on the distance formula
+ */
 double getPathRadius(int midX1, int midY1, int midX2, int midY2){
     return sqrt(pow(midX2 - midX1, 2) + pow(midY2 - midY1, 2));
 }
 
+/*
+ * Calculates and returns the degree that the circle is currently at
+ */
 int getDegree(int midX1, int midY1, int midX2, int midY2){
     if(midX2!=midX1){
-        cout << "Degree: " << atan2(midY2-midY1,midX2 - midX1) * 180/PI<< endl;
         return atan2(midY2-midY1,midX2 - midX1) * 180/PI;
     }
     else if (midX2 == midX1){

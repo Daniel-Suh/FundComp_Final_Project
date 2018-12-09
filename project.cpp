@@ -1,6 +1,8 @@
-//
-// Created by Daniel Suh on 12/1/18.
-//
+/*
+ * Author: Jeongseok Suh, Chris Gotuaco
+ * Filename: project.cpp
+ * Final Project
+ */
 
 #include <iostream>
 #include "gfx.h"
@@ -9,21 +11,27 @@ using namespace std;
 
 int main(){
     CircleBoard circleBoard = CircleBoard();
+    // Booleans to run the overarching while loops
     bool key = true;
     bool keyTutorial = true;
+    // Variables
     int clickOrder = 1;
     char event = 0;
+    // Variable to determine and record location of mouse clicks
     int midX1, midY1, midX2, midY2, xPos, yPos;
+    // Variables to pass into the newCircle function
     double pathRadius;
     int speed = 1;
     int orientation = 1;
     int circRadius = 20;
     int degree = 0;
+    // How many circles are on the board
     int circleNum = 0;
+    // Variable to determine which circle is being addressed
     int iter;
-    int pointSize, pointSpeed;
+
     gfx_open(1200, 800, "My window");
-    circleBoard.drawButtons();
+    // Tutorial Portion
     circleBoard.drawTutorial();
     while(keyTutorial){
         if(gfx_event_waiting()){
@@ -69,7 +77,7 @@ int main(){
         if (clickOrder == 1) {
             // Step 1
             gfx_clear();
-            gfx_text(100, 140, "Click somewhere in the demo square to set your center point.");
+            gfx_text(100, 160, "Click somewhere in the demo square to set your center point.");
             circleBoard.drawTutorial();
             gfx_line(590, 400, 590, 425);
             gfx_line(590, 425, 615, 425);
@@ -79,7 +87,7 @@ int main(){
         if (clickOrder == 2) {
             // Step 2
             gfx_clear();
-            gfx_text(100, 140, "Good job! Now press somewhere inside this second box to set your radius");
+            gfx_text(100, 160, "Good job! Now press somewhere inside this second box to set your radius");
             circleBoard.drawTutorial();
             gfx_line(400, 400, 400, 425);
             gfx_line(400, 425, 425, 425);
@@ -97,7 +105,7 @@ int main(){
             gfx_line(525, 400, 500, 400);
         }
         if (clickOrder == 4) {
-            // Step 3
+            // Step 4
             gfx_clear();
             circleBoard.drawTutorial();
             gfx_line(700, 400, 700, 425);
@@ -110,9 +118,8 @@ int main(){
             gfx_text(100, 160, "The Tutorial is finished! Press p to start playing the real game.");
             circleBoard.drawTutorial();
         }
+        // Makes the circles revolve around their midpoints
         if (circleNum >= 1){
-            //gfx_clear();
-            //circleBoard.drawTutorial();
             iter = 0;
             while(iter <= circleNum-1 && circleNum > 0){
                 circleBoard.advanceCircles(iter);
@@ -129,8 +136,10 @@ int main(){
     gfx_clear();
     circleBoard.resetScore();
     circleBoard.drawButtons();
+
     clickOrder = 1;
 
+    //Actual Game portion
     while(key){
         // Check for input and advance the circles
         if(gfx_event_waiting()){
@@ -182,13 +191,11 @@ int main(){
 
             // Check for mouse clicks on the board
             if (event == 1 && clickOrder == 1 && yPos < 600) {
-                cout << "First Click" << endl;
                 midX1 = xPos;
                 midY1 = yPos;
                 clickOrder = 2;
             }
             else if(event == 1 && clickOrder == 2 && yPos < 600) {
-                cout << "Second Click" << endl;
                 midX2 = xPos;
                 midY2 = yPos;
                 pathRadius = getPathRadius(midX1, midY1, midX2, midY2);
@@ -201,6 +208,7 @@ int main(){
                 }
             }
             // ASCII 27 is esc
+            // Quit the game
             if (event == 27){
                 gfx_clear();
                 gfx_text(500, 400, "Are You Sure You Want To End The Game?");
@@ -221,6 +229,7 @@ int main(){
             gfx_clear();
             circleBoard.drawButtons();
             iter = 0;
+            // Makes the circles revolve around their midpoints and checks for any collision between any two circles
             while(iter <= circleNum-1 && circleNum > 0){
                 circleBoard.advanceCircles(iter);
                 if (circleBoard.checkCollision(iter)){
