@@ -41,6 +41,7 @@ public:
     void clearCircles();
     bool checkCollision(int);
     void drawButtons();
+    void drawTutorial();
     void addPoints(int);
     void checkSetHighscore(int);
 private:

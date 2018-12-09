@@ -10,6 +10,7 @@ using namespace std;
 int main(){
     CircleBoard circleBoard = CircleBoard();
     bool key = true;
+    bool keyTutorial = true;
     int clickOrder = 1;
     char event = 0;
     int midX1, midY1, midX2, midY2, xPos, yPos;
@@ -19,11 +20,116 @@ int main(){
     int circRadius = 20;
     int degree = 0;
     int circleNum = 0;
+    int iter;
     int pointSize, pointSpeed;
     gfx_open(1200, 800, "My window");
     circleBoard.drawButtons();
+    circleBoard.drawTutorial();
+    while(keyTutorial){
+        if(gfx_event_waiting()){
+            event = gfx_wait();
+            xPos = gfx_xpos();
+            yPos = gfx_ypos();
+            // First Click
+            if (event == 1 && xPos > 590 && xPos < 615 && yPos > 400 && yPos < 425){
+                midX1 = xPos;
+                midY1 = yPos;
+                clickOrder = 2;
+            }
+            // Second Click
+            if (event == 1 && xPos > 400 && xPos < 425 && yPos > 400 && yPos < 425){
+                midX2 = xPos;
+                midY2 = yPos;
+                pathRadius = getPathRadius(midX1, midY1, midX2, midY2);
+                degree = getDegree(midX1, midY1, midX2, midY2);
+                circleBoard.newCircle(midX1, midY1, pathRadius, speed, orientation, circRadius, degree);
+                circleNum++;
+                clickOrder = 3;
+            }
+            // Third Click
+            if (event == 1 && xPos > 500 && xPos < 525 && yPos > 400 && yPos < 425){
+                midX1 = xPos;
+                midY1 = yPos;
+                clickOrder = 4;
+            }
+            // Fourth Click
+            if (event == 1 && xPos > 700 && xPos < 725 && yPos > 400 && yPos < 425){
+                midX2 = xPos;
+                midY2 = yPos;
+                pathRadius = getPathRadius(midX1, midY1, midX2, midY2);
+                degree = getDegree(midX1, midY1, midX2, midY2);
+                circleBoard.newCircle(midX1, midY1, pathRadius, speed, orientation, circRadius, degree);
+                circleNum++;
+                clickOrder = 5;
+            }
+            if (event == 'p'){
+                keyTutorial = false;
+            }
+        }
+        if (clickOrder == 1) {
+            // Step 1
+            gfx_clear();
+            gfx_text(100, 140, "Click somewhere in the demo square to set your center point.");
+            circleBoard.drawTutorial();
+            gfx_line(590, 400, 590, 425);
+            gfx_line(590, 425, 615, 425);
+            gfx_line(615, 425, 615, 400);
+            gfx_line(615, 400, 590, 400);
+        }
+        if (clickOrder == 2) {
+            // Step 2
+            gfx_clear();
+            gfx_text(100, 140, "Good job! Now press somewhere inside this second box to set your radius");
+            circleBoard.drawTutorial();
+            gfx_line(400, 400, 400, 425);
+            gfx_line(400, 425, 425, 425);
+            gfx_line(425, 425, 425, 400);
+            gfx_line(425, 400, 400, 400);
+        }
+        if (clickOrder == 3) {
+            // Step 3
+            gfx_clear();
+            gfx_text(100, 160, "Nice! Now lets make another circle.");
+            circleBoard.drawTutorial();
+            gfx_line(500, 400, 500, 425);
+            gfx_line(500, 425, 525, 425);
+            gfx_line(525, 425, 525, 400);
+            gfx_line(525, 400, 500, 400);
+        }
+        if (clickOrder == 4) {
+            // Step 3
+            gfx_clear();
+            circleBoard.drawTutorial();
+            gfx_line(700, 400, 700, 425);
+            gfx_line(700, 425, 725, 425);
+            gfx_line(725, 425, 725, 400);
+            gfx_line(725, 400, 700, 400);
+        }
+        if (clickOrder == 5) {
+            gfx_clear();
+            gfx_text(100, 160, "The Tutorial is finished! Press p to start playing the real game.");
+            circleBoard.drawTutorial();
+        }
+        if (circleNum >= 1){
+            //gfx_clear();
+            //circleBoard.drawTutorial();
+            iter = 0;
+            while(iter <= circleNum-1 && circleNum > 0){
+                circleBoard.advanceCircles(iter);
+                iter++;
+            }
+            gfx_flush();
+        }
+        usleep(PAUSE);
+    }
 
-
+    //Reset values for the Actual Game
+    circleNum = 0;
+    circleBoard.clearCircles();
+    gfx_clear();
+    circleBoard.resetScore();
+    circleBoard.drawButtons();
+    clickOrder = 1;
 
     while(key){
         // Check for input and advance the circles
@@ -88,9 +194,8 @@ int main(){
                 pathRadius = getPathRadius(midX1, midY1, midX2, midY2);
                 if (pathRadius > circRadius){
                     degree = getDegree(midX1, midY1, midX2, midY2);
-                    // Testing purposes. Move add points below new circle after done
-                    circleBoard.addPoints(circRadius / 10 * speed);
                     circleBoard.newCircle(midX1, midY1, pathRadius, speed, orientation, circRadius, degree);
+                    circleBoard.addPoints(circRadius / 10 * speed);
                     circleNum++;
                     clickOrder = 1;
                 }
@@ -111,18 +216,31 @@ int main(){
                     clickOrder = 1;
                 }
             }
-            if (event == 'q'){
-                key = false;
-            }
         }
         if (circleNum >= 1){
             gfx_clear();
             circleBoard.drawButtons();
-            for (int i = 0 ; i <= circleNum-1 ; i++){
-                circleBoard.advanceCircles(i);
+            iter = 0;
+            while(iter <= circleNum-1 && circleNum > 0){
+                circleBoard.advanceCircles(iter);
+                if (circleBoard.checkCollision(iter)){
+                    gfx_text(575, 50, "You Lost!");
+                    gfx_text(500, 100, "Press Any Key Except q to Play Again");
+                    event = gfx_wait();
+                    circleBoard.clearCircles();
+                    gfx_clear();
+                    circleBoard.resetScore();
+                    circleBoard.drawButtons();
+                    clickOrder = 1;
+                    circleNum = 0;
+                }
+                iter++;
             }
             gfx_flush();
             usleep(PAUSE);
+        }
+        if (event == 'q'){
+            key = false;
         }
     }
     return 0;

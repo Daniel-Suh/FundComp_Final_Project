@@ -79,6 +79,13 @@ void CircleBoard::drawButtons() {
     gfx_text(1130, 100, cs);
 }
 
+void CircleBoard::drawTutorial()
+{
+    drawButtons();
+    gfx_text(100, 100, "Welcome to the Circle Game!! ");
+    gfx_text(100, 120, "The goal of the game is to get as many moving circles as possible without having any of them collide with each other.");
+}
+
 void CircleBoard::advanceCircles(int cNum){
     srand(time(NULL));
     if(circleVect[cNum].degree >= 360){
